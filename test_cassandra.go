@@ -1,11 +1,10 @@
-package cassandraTest
+package main
 
 import (
 	"context"
 	"log"
 	"time"
 	"github.com/gocql/gocql"
-  "lib"
 )
 
 var (
@@ -39,7 +38,7 @@ func InitCassandra() {
 }
 
 func StoreData() error {
-  data:=lib.GenerateData()
+  data:=GenerateData()
   if err := session.Query(`INSERT INTO user_table(account_id, name, full_name,product_name,email,
      email_subject, email_body,user_agent, company, domain_name,gender,language,
     created_at, updatedat) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?)`,
@@ -52,10 +51,7 @@ func StoreData() error {
 
 }
 
-func main(){
-  StoreData()
-  fmt.Println("data Store Done!!")
-}
+
 
 //
 // func StoreBounceData(jsonData []byte) error {
