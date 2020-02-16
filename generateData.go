@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 "github.com/icrowley/fake"
 guuid "github.com/google/uuid"
 "time"
@@ -43,11 +42,11 @@ func GenerateDataBulk(count int) []TestData{
   }
   return test_data_bulk
 }
-
-func main() {
-  data:=GenerateData()
-  fmt.Println(data)
-  data_bulk:=GenerateDataBulk(10)
-  fmt.Println(data_bulk)
-
-}
+//
+// func main() {
+//   data:=GenerateData()
+//   fmt.Println(data)
+//   data_bulk:=GenerateDataBulk(10)
+//   fmt.Println(data_bulk)
+//
+// }

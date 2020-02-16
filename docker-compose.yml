@@ -27,6 +27,19 @@ services:
     networks:
       - default
 
+  test:
+    build:
+      context: .
+      dockerfile: test.dockerfile
+    tty: true
+    container_name: test
+    links:
+      - cassandra
+      - scylla
+    networks:
+      - default
+
+
 networks:
   default:
     driver: bridge

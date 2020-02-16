@@ -1,9 +1,6 @@
 FROM golang:1.13.5 as builder
-ENV PKG_PATH /etc/relay
+ENV PKG_PATH /etc/test
 RUN unset GOPATH
-
-#Add Dependencies to base image
-ADD shared/ $PKG_PATH/shared/
 
 # Add Maintainer Info
 LABEL maintainer="Khagura https://medium.com/@arshpreetsingh"
@@ -14,7 +11,6 @@ RUN apt-get update && apt-get install ca-certificates tzdata tar curl python && 
 
 #Adding all timezones and Setting UTC as Default
 RUN echo "UTC" >  /etc/timezone
-
 
 # Add all required modules into single image.
 WORKDIR $PKG_PATH
