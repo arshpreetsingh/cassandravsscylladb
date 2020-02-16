@@ -27,7 +27,7 @@ services:
     networks:
       - default
 
-  test:
+  test_cassandra:
     build:
       context: .
       dockerfile: test.dockerfile
@@ -35,10 +35,19 @@ services:
     container_name: test
     links:
       - cassandra
+    networks:
+      - default
+      
+  test_scylladb:
+    build:
+      context: .
+      dockerfile: test.dockerfile
+    tty: true
+    container_name: test
+    links:
       - scylla
     networks:
       - default
-
 
 networks:
   default:
