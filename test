@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS test.user ( account_id uuid, name text, full_name text, product_name text,email text, email_subject text, email_body text,user_agent text, company text, domain_name text,gender text,language text, created_at timestamp, updated_at timestamp, PRIMARY KEY (account_id));
+
+
+
+
+"CREATE TABLE IF NOT EXISTS test.user ( accountId text, webhook_name text, target text, last_success text, last_failure text, event_type text, authentication_type text, username text, password text, PRIMARY KEY (accountId,webhook_name));"

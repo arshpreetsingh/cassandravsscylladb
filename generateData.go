@@ -2,12 +2,12 @@ package main
 
 import (
 "github.com/icrowley/fake"
-guuid "github.com/google/uuid"
 "time"
+"math/rand"
 )
 
 type TestData struct {
-AccountID guuid.UUID
+AccountID int
 Name string
 FullName string
 ProductName string
@@ -24,7 +24,7 @@ Updatedat time.Time
 }
 
 func GenerateData() TestData{
-  test_data:=TestData{AccountID:guuid.New(),Name:fake.FirstName(),FullName:fake.FullName(),
+  test_data:=TestData{AccountID:rand.Intn(10000000),Name:fake.FirstName(),FullName:fake.FullName(),
     ProductName:fake.ProductName(),Email:fake.EmailAddress(),EmailSubject:fake.EmailSubject(),
     EmailBody:fake.EmailBody(),UserAgent:fake.UserAgent(),Company:fake.Company(),DomainName:fake.DomainName(),Gender:fake.Gender(),Language:fake.Language(),
     CreatedAt:time.Now(),Updatedat:time.Now()}
@@ -34,7 +34,7 @@ func GenerateData() TestData{
 func GenerateDataBulk(count int) []TestData{
   test_data_bulk:=[]TestData{}
   for i:=0;i<count;i++ {
-    test_data:=TestData{AccountID:guuid.New(),Name:fake.FirstName(),FullName:fake.FullName(),
+    test_data:=TestData{AccountID:rand.Intn(10000000),Name:fake.FirstName(),FullName:fake.FullName(),
       ProductName:fake.ProductName(),Email:fake.EmailAddress(),EmailSubject:fake.EmailSubject(),
       EmailBody:fake.EmailBody(),UserAgent:fake.UserAgent(),Company:fake.Company(),DomainName:fake.DomainName(),Gender:fake.Gender(),Language:fake.Language(),
       CreatedAt:time.Now(),Updatedat:time.Now()}

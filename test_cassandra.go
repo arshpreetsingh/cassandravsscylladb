@@ -17,7 +17,7 @@ func InitCassandra() {
 	cluster := gocql.NewCluster("cassandra") //replace PublicIP with the IP addresses used by your cluster.
 	cluster.Consistency = gocql.Quorum
 	cluster.ProtoVersion = 4
-	// cluster.Keyspace = ServiceConfig.Cassandra.KeySpace
+//	cluster.Keyspace = keySpace
 	cluster.ConnectTimeout = time.Second * 10
 	//cluster.Authenticator = gocql.PasswordAuthenticator{Username: "Username", Password: "Password"} //replace the username and password fields with their real settings.
 	session_cassandra, err = cluster.CreateSession()
@@ -25,35 +25,40 @@ func InitCassandra() {
 		panic(err)
 	}
 
-	keySpace := "test"
-
-	if err := session_cassandra.Query("CREATE KEYSPACE IF NOT EXISTS " + keySpace + " WITH REPLICATION = {'class' : 'SimpleStrategy','replication_factor' : 1};").Exec(); err != nil {
+	if err := session_cassandra.Query("CREATE KEYSPACE IF NOT EXISTS test WITH REPLICATION = {'class' : 'SimpleStrategy','replication_factor' : 1};").Exec(); err != nil {
 		log.Println(context.Background(), "Error for creating a keyspace[InitCassandra]:", err)
+		panic(err)
   }
-		return
-
-	if err := session_cassandra.Query("CREATE TABLE IF NOT EXISTS " + keySpace + ".user_table(account_id uuid, name text, full_name text,product_name text,email text, email_subject text, email_body string,user_agent string, company string, domain_name string,gender string,language string, created_at timestamp, updatedat timestamp PRIMARY KEY(account_id, email, company))").Exec(); err != nil {
-		log.Println(context.Background(), "Error in Creating user bounces table:", err)
+	if err := session_cassandra.Query("CREATE TABLE IF NOT EXISTS test.user ( account_id int, name text, full_name text, product_name text,email text, email_subject text, email_body text,user_agent text, company text, domain_name text,gender text,language text, created_at timestamp, updated_at timestamp, PRIMARY KEY (account_id));").Exec(); err != nil {
+		log.Println(context.Background(), "Error in Creating user  table:", err)
 		panic(err)
 	}
 }
 
-func StoreDataCassandra() error {
+func StoreDataCassandra(count int) error {
+	startTime:=time.Now()
+	for i:=0;i<count;i++{
   data:=GenerateData()
-  if err := session_cassandra.Query(`INSERT INTO user_table(account_id, name, full_name,product_name,email,
+  if err := session_cassandra.Query(`INSERT INTO test.user ( account_id, name, full_name,product_name,email,
      email_subject, email_body,user_agent, company, domain_name,gender,language,
-    created_at, updatedat) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?)`,
-		data.AccountID, data.FullName, data.ProductName, data.Email, data.EmailSubject,
+    created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?)`,
+		data.AccountID, data.Name,data.FullName, data.ProductName, data.Email, data.EmailSubject,
     data.EmailBody, data.UserAgent,data.Company,data.DomainName,data.Gender,data.Language,data.CreatedAt,data.Updatedat).Exec(); err != nil {
-		log.Println("Error! unable to insert data into cassandra[StoreBounceData]:", err)
+		log.Println("Error! unable to insert data into cassandra", err)
 		return err
   }
+}
+  endTime:=time.Now()
+	diff:=endTime.Sub(startTime).Seconds()
+	fmt.Println("Write Operation Finished for Count::"+"   "+string(count)+"   "+"in Following Seconds")
+  fmt.Println("*************")
+	fmt.Println(diff)
+	fmt.Println("*************")
   return nil
-
 }
 
 func FetchDataCassandra() {
-	accountid:="1234"
+	accountid:=1902081
 	query := fmt.Sprintf("SELECT account_id, name, full_name,product_name,email,email_subject, email_body,user_agent, company, domain_name,gender,language, created_at, updatedat from test.user_table WHERE account_id = ?")
 	iter := session_cassandra.Query(query, accountid).Iter()
 	for iter.Scan(&accountid) {
