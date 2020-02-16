@@ -45,14 +45,24 @@ if os.Args[1]=="Cassandra" && os.Args[2]=="Write"{
   fmt.Println(os.Args[1],os.Args[2])
   fmt.Println("Starting Writing Operation For Scylladb")
   InitScyllaDB()
+  count, err := strconv.Atoi(os.Args[3])
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(2)
+    }
   fmt.Println("Scylladb Successfuly Initilized!")
-  FetchDataSycllaDB()
+  FetchDataSycllaDB(count)
 }else if os.Args[1]=="Cassandra" && os.Args[2]=="Read" {
   fmt.Println(os.Args[1],os.Args[2])
   fmt.Println("Starting Read Operation For Cassandra")
   InitCassandra()
+  count, err := strconv.Atoi(os.Args[3])
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(2)
+    }
   fmt.Println("Cassandr Successfuly Initilized!")
-  FetchDataCassandra()
+  FetchDataCassandra(count)
 }else {
   fmt.Println("No Arguments Passed!!")
   fmt.Println(os.Args[1],os.Args[2])

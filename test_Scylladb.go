@@ -57,10 +57,16 @@ func StoreDataSycllaDB(count int) error {
   return nil
 }
 
-func FetchDataSycllaDB() {
-	accountid:=1902081
+func FetchDataSycllaDB(accountid int) {
+	startTime:=time.Now()
 	query := fmt.Sprintf("SELECT account_id, name, full_name,product_name,email,email_subject, email_body,user_agent, company, domain_name,gender,language, created_at, updatedat from test.user_table WHERE account_id = ?")
-	iter := session_scylla.Query(query, accountid).Iter()
+	iter := session_cassandra.Query(query, accountid).Iter()
+	endTime:=time.Now()
+	diff:=endTime.Sub(startTime).Seconds()
+	fmt.Println("Write Operation Finished in Following Seconds")
+	fmt.Println("*************")
+	fmt.Println(diff)
+	fmt.Println("*************")
 	for iter.Scan(&accountid) {
 		fmt.Println("account_ID",accountid)
 	}

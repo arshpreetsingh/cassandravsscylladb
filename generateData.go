@@ -24,7 +24,7 @@ Updatedat time.Time
 }
 
 func GenerateData() TestData{
-  test_data:=TestData{AccountID:rand.Intn(10000000),Name:fake.FirstName(),FullName:fake.FullName(),
+  test_data:=TestData{AccountID:rand.Intn(1000000000000),Name:fake.FirstName(),FullName:fake.FullName(),
     ProductName:fake.ProductName(),Email:fake.EmailAddress(),EmailSubject:fake.EmailSubject(),
     EmailBody:fake.EmailBody(),UserAgent:fake.UserAgent(),Company:fake.Company(),DomainName:fake.DomainName(),Gender:fake.Gender(),Language:fake.Language(),
     CreatedAt:time.Now(),Updatedat:time.Now()}
