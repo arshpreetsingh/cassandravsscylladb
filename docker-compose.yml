@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  base:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+  cassandra:
+    image: cassandra
+    ports:
+      - "9042:9042"
+    volumes:
+      - ./tmp/db/cassandra:/var/lib/cassendra
+    networks:
+      - default
+    volumes:
+      - /dev/shm:/dev/shm
+
+  scylla:
+    image: scylladb/scylla
+    container_name: scylla
+    ports:
+      - "9042:9042"
+    volumes:
+      - ./tmp/db/scylladb:/var/lib/scylladb
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
