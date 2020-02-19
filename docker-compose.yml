@@ -11,10 +11,10 @@ services:
     image: timescale/timescaledb:1.2.1-pg11
     ports:
     - "5432:5432"
-    volumes:
-    - ./tmp/db/timescale:/var/lib/postgresql/data
+    # volumes:
+    # - ./tmp/db/timescale:/var/lib/postgresql/data
     environment:
-       POSTGRES_DB: relay
+       POSTGRES_DB: test
        POSTGRES_USER: maropost
        POSTGRES_PASSWORD: Maro123!
     networks:
