@@ -29,7 +29,7 @@ func InitScyllaDB() {
 		log.Println(context.Background(), "Error for creating a keyspace[Initscylladb]:", err)
 		panic(err)
 	}
-	if err := session_cassandra.Query("CREATE TABLE IF NOT EXISTS test.user ( account_id bigint, name text, full_name text, product_name text,email text, email_subject text, email_body text,user_agent text, company text, domain_name text,gender text,language text, created_at timestamp, updated_at timestamp, PRIMARY KEY (account_id));").Exec(); err != nil {
+	if err := session_cassandra.Query("CREATE TABLE IF NOT EXISTS test.user ( account_id bigint, name text, full_name text, product_name text,email text, email_subject text, email_body text,user_agent text, company text, domain_name text,gender text,language text, created_at timestamp, updated_at timestamp, PRIMARY KEY (account_id,created_at));").Exec(); err != nil {
 		log.Println(context.Background(), "Error in Creating user  table:", err)
 		panic(err)
 	}

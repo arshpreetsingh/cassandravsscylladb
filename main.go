@@ -18,6 +18,8 @@ func main() {
 // flag.StringVar(&TestName,"TestName","","Enter Your TestName")
 // flag.Parse()
 
+//
+
 if os.Args[1]=="Cassandra" && os.Args[2]=="Write"{
   fmt.Println(os.Args[1],os.Args[2])
   fmt.Println("Starting Writing Operation For Cassandra")
@@ -29,6 +31,11 @@ if os.Args[1]=="Cassandra" && os.Args[2]=="Write"{
     }
   fmt.Println("Cassandra Successfuly Initilized!")
   StoreDataCassandra(count)
+} else if os.Args[1]=="Timescaledb" && os.Args[2]=="Write"{
+  fmt.Println(os.Args[1],os.Args[2])
+  fmt.Println("Starting Writing Operation For TimeScaledb")
+  StartTimeScale()
+
 } else if os.Args[1]=="Scylladb" && os.Args[2]=="Write" {
 
   fmt.Println(os.Args[1],os.Args[2])
