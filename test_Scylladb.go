@@ -9,10 +9,6 @@ import (
 	"github.com/gocql/gocql"
 )
 
-var (
-	session_scylla *gocql.Session
-)
-
 func InitScyllaDB() {
 	var err error
 	cluster := gocql.NewCluster("scylladb") //replace PublicIP with the IP addresses used by your cluster.
