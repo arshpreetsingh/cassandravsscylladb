@@ -51,9 +51,14 @@ services:
     ports:
       - 8086:8086
     networks:
-      - monitoring
-    volumes:
-      - influxdb-volume:/var/lib/influxdb
+      - default
+    # volumes:
+    #   - influxdb-volume:/var/lib/influxdb
+    environment:
+      INFLUXDB_DB: "test"
+      INFLUXDB_USER: "test"
+      INFLUXDB_USER_PASSWORD: "test"
+
 
   test_cassandra:
     build:

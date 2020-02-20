@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -9,6 +11,31 @@ import (
 )
 
 func main() {
+
+	host = "influx"
+	port = "8086"
+	db = "test"
+	user = "test"
+	password = "test"
+
+	// workaround, daocloud influxdb have not privision db instance
+	if len(db) == 0 {
+		db = "mydb"
+	}
+
+	connect()
+	log.Println("Successfully connect to influxdb ...")
+
+	// prepare data
+	create()
+	insert()
+
+	http.HandleFunc("/", hello)
+
+	log.Println("Start listening...")
+	if err := http.ListenAndServe(":80", nil); err != nil {
+		log.Fatal(err)
+	}
 	// go build -o main main.go
 	//  go run main.go Cassandra write
 

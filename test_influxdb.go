@@ -5,10 +5,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"time"
-
-	"github.com/influxdb/influxdb/client"
 )
 
 var ic *client.Client
@@ -24,6 +21,7 @@ func connect() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	ic, err = client.NewClient(client.Config{URL: *u})
 	if err != nil {
 		log.Fatal(err)
@@ -34,31 +32,6 @@ func connect() {
 	}
 
 	ic.SetAuth(user, password)
-}
-
-func InitInflux() {
-
-	u, err := url.Parse(fmt.Sprintf("http://%s:%s", host, port))
-	if err != nil {
-		log.Fatal(err)
-	}
-	ic, err = client.NewClient(client.Config{URL: *u})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if _, _, err := ic.Ping(); err != nil {
-		log.Fatal(err)
-	}
-
-	ic.SetAuth(user, password)
-	q := client.Query{
-		Command:  fmt.Sprintf("create database %s", db),
-		Database: db,
-	}
-	// ignore the error of existing database
-	ic.Query(q)
-
 }
 
 func create() {
@@ -93,7 +66,6 @@ func insert() {
 			},
 			Time: time.Now(),
 		}
-
 	}
 
 	bps := client.BatchPoints{
@@ -146,29 +118,30 @@ func hello(res http.ResponseWriter, req *http.Request) {
 	res.Write([]byte(fmt.Sprintf("The first shape is %s %s!", m["color"], m["shape"])))
 }
 
-func main() {
-	host = os.Getenv("INFLUXDB_PORT_8086_TCP_ADDR")
-	port = os.Getenv("INFLUXDB_PORT_8086_TCP_PORT")
-	db = os.Getenv("INFLUXDB_INSTANCE")
-	user = os.Getenv("INFLUXDB_USERNAME")
-	password = os.Getenv("INFLUXDB_PASSWORD")
-
-	// workaround, daocloud influxdb have not privision db instance
-	if len(db) == 0 {
-		db = "mydb"
-	}
-
-	connect()
-	log.Println("Successfully connect to influxdb ...")
-
-	// prepare data
-	create()
-	insert()
-
-	http.HandleFunc("/", hello)
-
-	log.Println("Start listening...")
-	if err := http.ListenAndServe(":80", nil); err != nil {
-		log.Fatal(err)
-	}
-}
+//
+// func main() {
+// 	host = "influx"
+// 	port = "8086"
+// 	db = "test"
+// 	user = "test"
+// 	password = "test"
+//
+// 	// workaround, daocloud influxdb have not privision db instance
+// 	if len(db) == 0 {
+// 		db = "mydb"
+// 	}
+//
+// 	connect()
+// 	log.Println("Successfully connect to influxdb ...")
+//
+// 	// prepare data
+// 	create()
+// 	insert()
+//
+// 	http.HandleFunc("/", hello)
+//
+// 	log.Println("Start listening...")
+// 	if err := http.ListenAndServe(":80", nil); err != nil {
+// 		log.Fatal(err)
+// 	}
+// }
