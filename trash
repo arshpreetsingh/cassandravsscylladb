@@ -1,0 +1,124 @@
+CONTAINER ID        NAME                              CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+c0612b5c61e2        cassandravsscylladb_cassandra_1   2.08%               1.153GiB / 1.952GiB   59.06%              1.58kB / 0B         80.1MB / 2.15MB     42
+
+
+CONTAINER ID        NAME                              CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+c0612b5c61e2        cassandravsscylladb_cassandra_1   124.68%             1.171GiB / 1.952GiB   60.00%              17.9MB / 1.46MB     80.5MB / 74.8MB     54
+
+CONTAINER ID        NAME                              CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+c0612b5c61e2        cassandravsscylladb_cassandra_1   100.57%             1.165GiB / 1.952GiB   59.66%              51.3MB / 4.15MB     80.5MB / 301MB      52
+
+CONTAINER ID        NAME                              CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+fe7c003f7e25        cassandravsscylladb_cassandra_1   111.96%             1.175GiB / 1.952GiB   60.20%              19.4MB / 1.58MB     39.3MB / 79.2MB     64
+
+docker-compose run test_cassandra Cassandra Write 100000 [Replicatin factor =1, Number of nodes=1]
+*************
+139.6212897
+*************
+docker-compose run test_cassandra Cassandra Read 100
+Write Operation Finished in Following Seconds
+*************
+0.0077322
+*************
+docker-compose run test_cassandra Cassandra Read 100
+Read Operation Finished in Following Seconds
+*************
+0.0363132
+*************
+docker-compose run test_cassandra Cassandra ReadMultiple 100
+Multiple READ Opeartion Finised in Following Seconds
+*************
+151.683418
+*************
+Multiple READ Opeartion Finised in Following Seconds
+*************
+161.2080513
+*************
+CONTAINER ID        NAME                              CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+80841e01ac10        cassandravsscylladb_cassandra_1   71.11%              1.168GiB / 1.952GiB   59.82%              155MB / 26.5MB      18.6MB / 633MB      49
+
+CONTAINER ID        NAME                              CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+80841e01ac10        cassandravsscylladb_cassandra_1   65.88%              1.167GiB / 1.952GiB   59.80%              177MB / 35.4MB      18.6MB / 633MB      49
+
+/////// Cassandra Read-Write simultanious
+CONTAINER ID        NAME                              CPU %               MEM USAGE / LIMIT    MEM %               NET I/O             BLOCK I/O           PIDS
+02697a147a20        cassandravsscylladb_cassandra_1   84.79%              1.17GiB / 1.952GiB   59.91%              44.8MB / 6.05MB     48MB / 143MB        47
+
+docker-compose run test_cassandra Cassandra Write 100000
+Write Operation Finished for Count::   𘚠   in Following Seconds
+*************
+252.0706221
+*************
+docker-compose run test_cassandra Cassandra ReadMultiple 100
+Multiple READ Opeartion Finised in Following Seconds
+*************
+216.5731171
+*************
+
+//////////// timescale
+CONTAINER ID        NAME                                               CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+9ed32dfa4ed2        cassandravsscylladb_timescaledb_run_e1e7d324b70d   0.14%               12.47MiB / 1.952GiB   0.62%               2.47kB / 996B       32.5MB / 142MB      10
+
+CONTAINER ID        NAME                                CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+dd9fa67ebf05        cassandravsscylladb_timescaledb_1   49.02%              17.05MiB / 1.952GiB   0.85%               76.8MB / 13MB       24.6kB / 926MB      12
+
+CONTAINER ID        NAME                                CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+34369c162689        cassandravsscylladb_timescaledb_1   43.82%              17.54MiB / 1.952GiB   0.88%               54.7MB / 9.27MB     131kB / 714MB       12
+
+docker-compose run test_timescaledb Timescaledb Write 100000
+*************
+85.2112561
+*************
+// Tested with 5000 connections and
+???? Never Finishess--The database is in recvery MOde///
+Not able to fetch data from Database: pq: the database system is in recovery mode
+ // With 1000 connectins
+ Not able to fetch data from Database: pq: sorry, too many clients alreadyrows
+panic: runtime error: invalid memory address or nil pointer dereference
+// Tested with 3000 connections and
+???? Never Finishess--The database is in recvery MOde///
+Not able to fetch data from Database: pq: the database system is in recovery mode
+
+CONTAINER ID        NAME                                CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+f6bd087f2895        cassandravsscylladb_timescaledb_1   0.00%               5.008MiB / 1.952GiB   0.25%               3.3MB / 3.85MB      1.78GB / 461MB      10
+
+
+// ScyllaDB
+docker-compose run test_scylladb Scylladb Write 100000
+Write Operation Finished for Count::   𘚠   in Following Seconds
+*************
+108.8358149
+*************
+
+CONTAINER ID        NAME                CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+45a9a4f83234        scylla              41.76%              302.3MiB / 1.952GiB   15.12%              45.9MB / 3.85MB     7.18MB / 1.01GB     31
+
+CONTAINER ID        NAME                CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+45a9a4f83234        scylla              49.84%              402.7MiB / 1.952GiB   20.14%              80.6MB / 6.66MB     52.3MB / 1.13GB     31
+
+docker-compose run test_timescaledb Scylladb ReadMultiple 100
+Multiple READ Opeartion Finised in Following Seconds
+*************
+150.3796168
+*************
+CONTAINER ID        NAME                CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+45a9a4f83234        scylla              60.85%              498.9MiB / 1.952GiB   24.96%              116MB / 10.4MB      120MB / 1.57GB      31
+
+
+
+Write Operation Finished for Count::   𘚠   in Following Seconds
+*************
+186.6694362
+*************
+
+Multiple READ Opeartion Finised in Following Seconds
+*************
+195.3558651
+*************
+
+CONTAINER ID        NAME                CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+ed1c52a48c3b        scylla              50.01%              303.7MiB / 1.952GiB   15.19%              51.3MB / 6.6MB      8.54MB / 704MB      31
+
+
+CONTAINER ID        NAME                CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+ed1c52a48c3b        scylla              50.01%              303.7MiB / 1.952GiB   15.19%              51.3MB / 6.6MB      8.54MB / 704MB      31

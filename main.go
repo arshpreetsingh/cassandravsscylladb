@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 	//"strings"
 )
 
@@ -32,7 +33,7 @@ func main() {
 	} else if os.Args[1] == "Timescaledb" && os.Args[2] == "Write" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Writing Operation For TimeScaledb")
-		//InitTimeScale()
+		InitTimeScale()
 		count, err := strconv.Atoi(os.Args[3])
 		if err != nil {
 			fmt.Println(err)
@@ -71,8 +72,29 @@ func main() {
 			fmt.Println(err)
 			os.Exit(2)
 		}
-		fmt.Println("Scylladb Successfuly Initilized!")
+		fmt.Println("Timescaledb Successfuly Initilized!")
 		FetchDataTimescaledb(count)
+	} else if os.Args[1] == "Timescaledb" && os.Args[2] == "ReadMultiple" {
+		fmt.Println(os.Args[1], os.Args[2])
+		fmt.Println("Starting Writing Operation For Scylladb")
+		InitTimeScale()
+		count, err := strconv.Atoi(os.Args[3])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(2)
+		}
+		fmt.Println("Timescaledb Successfuly Initilized!")
+		startTime := time.Now()
+		for i := 0; i < 100000; i++ {
+			fmt.Println("__hello")
+			FetchDataTimescaledb(count)
+		}
+		endTime := time.Now()
+		diff := endTime.Sub(startTime).Seconds()
+		fmt.Println("Multiple READ Opeartion Finised in Following Seconds")
+		fmt.Println("*************")
+		fmt.Println(diff)
+		fmt.Println("*************")
 	} else if os.Args[1] == "Cassandra" && os.Args[2] == "Read" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Read Operation For Cassandra")
@@ -84,6 +106,54 @@ func main() {
 		}
 		fmt.Println("Cassandr Successfuly Initilized!")
 		FetchDataCassandra(count)
+	} else if os.Args[1] == "Cassandra" && os.Args[2] == "ReadMultiple" {
+		fmt.Println(os.Args[1], os.Args[2])
+		fmt.Println("Starting Read Operation For Cassandra")
+		InitCassandra()
+		count, err := strconv.Atoi(os.Args[3])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(2)
+		}
+		fmt.Println(count)
+		fmt.Println("Cassandr Successfuly Initilized!")
+		startTime := time.Now()
+		fmt.Println("Multiple Operatin Started")
+		for i := 0; i < 100000; i++ {
+			fmt.Println("hello____________")
+			FetchDataCassandra(100)
+		}
+		endTime := time.Now()
+		diff := endTime.Sub(startTime).Seconds()
+		fmt.Println("Multiple READ Opeartion Finised in Following Seconds")
+		fmt.Println("*************")
+		fmt.Println(diff)
+		fmt.Println("*************")
+
+	} else if os.Args[1] == "Scylladb" && os.Args[2] == "ReadMultiple" {
+		fmt.Println(os.Args[1], os.Args[2])
+		fmt.Println("Starting Read Operation For Cassandra")
+		InitScyllaDB()
+		count, err := strconv.Atoi(os.Args[3])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(2)
+		}
+		fmt.Println(count)
+		fmt.Println("Cassandr Successfuly Initilized!")
+		startTime := time.Now()
+		fmt.Println("Multiple Operatin Started")
+		for i := 0; i < 100000; i++ {
+			fmt.Println("hello____________")
+			FetchDataSycllaDB(count)
+		}
+		endTime := time.Now()
+		diff := endTime.Sub(startTime).Seconds()
+		fmt.Println("Multiple READ Opeartion Finised in Following Seconds")
+		fmt.Println("*************")
+		fmt.Println(diff)
+		fmt.Println("*************")
+
 	} else if os.Args[1] == "Cassandra" && os.Args[2] == "Read" && os.Args[4] == "Complex" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Read Operation For Cassandra")

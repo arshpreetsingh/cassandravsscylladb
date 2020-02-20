@@ -97,7 +97,9 @@ func FetchDataTimescaledb(accountid int) {
 	if err != nil {
 		fmt.Printf("Not able to fetch data from Database: %v", err)
 	}
+	fmt.Println("rows")
 	for rows.Next() {
+		fmt.Println("rows")
 		fmt.Println(rows)
 		// err := rows.Scan(&accountid)
 		// if err != nil {
@@ -107,7 +109,7 @@ func FetchDataTimescaledb(accountid int) {
 	}
 	endTime := time.Now()
 	diff := endTime.Sub(startTime).Seconds()
-	fmt.Println("Write Operation Finished in Following Seconds")
+	fmt.Println("Read Operation Finished in Following Seconds")
 	fmt.Println("*************")
 	fmt.Println(diff)
 	fmt.Println("*************")
