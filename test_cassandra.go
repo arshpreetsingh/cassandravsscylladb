@@ -81,7 +81,7 @@ func FetchDataCassandraComplex(accountid int) {
 	iter := session_cassandra.Query(query, accountid, created_at, created_at, accountid, created_at).Iter()
 	endTime := time.Now()
 	diff := endTime.Sub(startTime).Seconds()
-	fmt.Println("Read Operation Finished in Following Seconds")
+	fmt.Println("Read Complex Operation Finished in Following Seconds")
 	fmt.Println("*************")
 	fmt.Println(diff)
 	fmt.Println("*************")

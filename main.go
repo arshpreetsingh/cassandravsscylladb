@@ -106,6 +106,40 @@ func main() {
 		}
 		fmt.Println("Cassandr Successfuly Initilized!")
 		FetchDataCassandra(count)
+	} else if os.Args[1] == "Cassandra" && os.Args[2] == "ReadComplex" {
+		fmt.Println(os.Args[1], os.Args[2])
+		fmt.Println("Starting Read Operation For Cassandra")
+		InitCassandra()
+		count, err := strconv.Atoi(os.Args[3])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(2)
+		}
+		fmt.Println("Cassandr Successfuly Initilized!")
+		FetchDataCassandraComplex(count)
+		//FetchDataCassandra(count)
+	} else if os.Args[1] == "Cassandra" && os.Args[2] == "ReadComplexMultiple" {
+		fmt.Println(os.Args[1], os.Args[2])
+		fmt.Println("Starting Read Operation For Cassandra")
+		InitCassandra()
+		count, err := strconv.Atoi(os.Args[3])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(2)
+		}
+		startTime := time.Now()
+		fmt.Println("Cassandr Successfuly Initilized!")
+		for i := 0; i < 100000; i++ {
+			fmt.Println("hello____________")
+			FetchDataCassandraComplex(count)
+		}
+		endTime := time.Now()
+		diff := endTime.Sub(startTime).Seconds()
+		fmt.Println("Multiple READ Opeartion Finised in Following Seconds")
+		fmt.Println("*************")
+		fmt.Println(diff)
+		fmt.Println("*************")
+		//FetchDataCassandra(count)
 	} else if os.Args[1] == "Cassandra" && os.Args[2] == "ReadMultiple" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Read Operation For Cassandra")

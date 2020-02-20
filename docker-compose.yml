@@ -44,6 +44,17 @@ services:
     volumes:
       - /dev/shm:/dev/shm
 
+  influxdb:
+    image: influxdb
+    container_name: influxdb
+    restart: always
+    ports:
+      - 8086:8086
+    networks:
+      - monitoring
+    volumes:
+      - influxdb-volume:/var/lib/influxdb
+
   test_cassandra:
     build:
       context: .

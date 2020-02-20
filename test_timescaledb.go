@@ -9,13 +9,18 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// var DB *sql.DB
-
 const (
 	DB_USER     = "maropost"
 	DB_PASSWORD = "Maro123!"
 	DB_NAME     = "test"
 )
+
+var DB *sql.DB
+dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s host=%s sslmode=disable", DB_USER, DB_PASSWORD, DB_NAME, "timescaledb")
+dbcon, err := sql.Open("postgres", dbinfo)
+if err != nil {
+  log.Panic("Error! Unable to Connect to DB:" + err.Error())
+}
 
 func InitTimeScale() {
 	var dbcon *sql.DB

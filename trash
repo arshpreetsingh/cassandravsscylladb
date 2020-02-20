@@ -122,3 +122,12 @@ ed1c52a48c3b        scylla              50.01%              303.7MiB / 1.952GiB 
 
 CONTAINER ID        NAME                CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
 ed1c52a48c3b        scylla              50.01%              303.7MiB / 1.952GiB   15.19%              51.3MB / 6.6MB      8.54MB / 704MB      31
+
+
+
+Multiple READ Opeartion Finised in Following Seconds
+*************
+195.3558651
+*************
+CONTAINER ID        NAME                              CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+b34c3ce9c574        cassandravsscylladb_cassandra_1   66.94%              1.095GiB / 1.952GiB   56.10%              124MB / 14.9MB      560MB / 645MB       49
