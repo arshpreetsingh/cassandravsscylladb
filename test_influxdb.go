@@ -51,26 +51,29 @@ func InitInfluxdb() {
 
 func StoreDataInfluxdb(count int) error {
 	startTime := time.Now()
-	var (
-		shapes     = []string{"circle", "rectangle", "square", "triangle"}
-		colors     = []string{"red", "blue", "green", "yellow"}
-		sampleSize = 4
-		pts        = make([]client.Point, sampleSize)
-	)
-
-	for i := 0; i < sampleSize; i++ {
+	pts := make([]client.Point, count)
+	for i := 0; i < count; i++ {
+		data := GenerateData()
 		pts[i] = client.Point{
 			Measurement: "shapes",
-			Tags: map[string]string{
-				"color": colors[i],
-				"shape": shapes[i],
-			},
 			Fields: map[string]interface{}{
-				"value": i,
+				"AccountID": data.AccountID,
+				"Name": data.Name,
+				"FullName": data.FullName,
+				"ProductName": data.ProductName,
+				"Email": data.Email,
+				"EmailSubject": data.EmailSubject,
+				"EmailBody": data.EmailBody,
+				"UserAgent": data.UserAgent,
+				"Company": data.Company,
+				"DomainName": data.DomainName,
+				"Gender": data.Gender,
+				"Language": data.Language,
 			},
 			Time: time.Now(),
 		}
 	}
+
 		bps := client.BatchPoints{
 			Points:          pts,
 			Database:        db,
