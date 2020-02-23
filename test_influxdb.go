@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
+//	"net/http"
 	"net/url"
 	"time"
 
@@ -94,7 +94,7 @@ func StoreDataInfluxdb(count int) error {
 	return nil
 }
 
-func query() map[string]string {
+func FetchDataInflux(count int) error {
 	q := client.Query{
 		Command:  "select * from shapes where value = 0",
 		Database: db,
@@ -103,58 +103,7 @@ func query() map[string]string {
 	response, err := ic.Query(q)
 	if err != nil {
 		log.Println("Error, ", err)
-		return nil
 	}
-
-	if response.Error() != nil {
-		log.Println("Response error, ", response.Error())
-		return nil
-	}
-
-	result := response.Results[0]
-	if result.Err != nil {
-		log.Println("Result error, ", result.Err)
-		return nil
-	}
-
-	serie := result.Series[0]
-	// if serie.Err != nil {
-	// 	log.Println("Serie error, ", serie.Err)
-	// 	return nil
-	// }
-
-	return serie.Tags
+	fmt.Println(response)
+	return nil
 }
-
-func hello(res http.ResponseWriter, req *http.Request) {
-	m := query()
-	res.Write([]byte(fmt.Sprintf("The first shape is %s %s!", m["color"], m["shape"])))
-}
-
-//
-// func main() {
-	// host = "influx"
-	// port = "8086"
-	// db = "test"
-	// user = "test"
-	// password = "test"
-	//
-	// // workaround, daocloud influxdb have not privision db instance
-	// if len(db) == 0 {
-	// 	db = "mydb"
-	// }
-	//
-	// connect()
-	// log.Println("Successfully connect to influxdb ...")
-	//
-	// // prepare data
-	// create()
-	// insert()
-	//
-	// http.HandleFunc("/", hello)
-	//
-	// log.Println("Start listening...")
-	// if err := http.ListenAndServe(":80", nil); err != nil {
-	// 	log.Fatal(err)
-	// }
-// }

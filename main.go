@@ -26,6 +26,7 @@ func main() {
 	// flag.StringVar(&TestName,"TestName","","Enter Your TestName")
 	// flag.Parse()
 	//
+	InitIgnite()
 	if os.Args[1] == "Cassandra" && os.Args[2] == "Write" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Writing Operation For Cassandra")
@@ -81,6 +82,17 @@ func main() {
 		}
 		fmt.Println("Scylladb Successfuly Initilized!")
 		FetchDataSycllaDB(count)
+	} else if os.Args[1] == "Influxdb" && os.Args[2] == "Read" {
+		fmt.Println(os.Args[1], os.Args[2])
+		fmt.Println("Starting Reading Operation For InfluxDB")
+		InitInfluxdb()
+		count, err := strconv.Atoi(os.Args[3])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(2)
+		}
+		fmt.Println("Influx Successfuly Initilized!")
+		FetchDataInflux(count)
 	} else if os.Args[1] == "Timescaledb" && os.Args[2] == "Read" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Writing Operation For Scylladb")
@@ -113,6 +125,28 @@ func main() {
 		fmt.Println("*************")
 		fmt.Println(diff)
 		fmt.Println("*************")
+	} else if os.Args[1] == "Influxdb" && os.Args[2] == "ReadMultiple" {
+		fmt.Println(os.Args[1], os.Args[2])
+		fmt.Println("Starting Reading Operation For InfluxDB")
+		InitInfluxdb()
+		count, err := strconv.Atoi(os.Args[3])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(2)
+		}
+		fmt.Println("Influxdb Successfuly Initilized!")
+		startTime := time.Now()
+		for i := 0; i < 1000; i++ {
+			fmt.Println("__hello")
+			FetchDataInflux(count)
+		}
+		endTime := time.Now()
+		diff := endTime.Sub(startTime).Seconds()
+		fmt.Println("Multiple READ Opeartion Finised in Following Seconds")
+		fmt.Println("*************")
+		fmt.Println(diff)
+		fmt.Println("*************")
+
 	} else if os.Args[1] == "Cassandra" && os.Args[2] == "Read" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Read Operation For Cassandra")
@@ -218,6 +252,7 @@ func main() {
 		fmt.Println("Cassandr Successfuly Initilized!")
 		FetchDataCassandraComplex(count)
 	} else {
+
 		fmt.Println("No Arguments Passed!!")
 		fmt.Println(os.Args[1], os.Args[2])
 	}

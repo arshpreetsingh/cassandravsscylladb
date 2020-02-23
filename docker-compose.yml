@@ -61,6 +61,28 @@ services:
       INFLUXDB_HTTP_MAX_BODY_SIZE: 0
       INFLUXDB_HTTP_MAX_CONCURRENT_WRITE_LIMIT: 0
 
+  apacheignite:
+    image: apacheignite/ignite
+    container_name: ingite
+    restart: always
+    ports:
+      - 10800:10800
+    networks:
+      - default
+    environment:
+      IGNITE_CONFIG: https://raw.githubusercontent.com/apache/ignite/master/examples/config/example-cache.xml
+
+  test_ignite:
+    build:
+      context: .
+      dockerfile: test.dockerfile
+    tty: true
+    container_name: test
+    links:
+      - apacheignite
+    networks:
+      - default
+
 
   test_influxdb:
     build:
