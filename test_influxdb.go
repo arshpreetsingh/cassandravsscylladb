@@ -7,8 +7,8 @@ import (
 	"net/url"
 	"time"
 
-	_ "github.com/influxdata/influxdb1-client"
-	client "github.com/influxdata/influxdb1-client/v2"
+	 "github.com/influxdata/influxdb1-client"
+//	client "github.com/influxdata/influxdb1-client/v2"
 )
 
 var ic *client.Client
@@ -19,7 +19,13 @@ var db string
 var user string
 var password string
 
-func connect() {
+
+func InitInfluxdb() {
+	host = "influxdb"
+	port = "8086"
+	db = "test"
+	user = "test"
+	password = "test"
 	u, err := url.Parse(fmt.Sprintf("http://%s:%s", host, port))
 	if err != nil {
 		log.Fatal(err)
@@ -33,23 +39,18 @@ func connect() {
 	if _, _, err := ic.Ping(); err != nil {
 		log.Fatal(err)
 	}
-
 	ic.SetAuth(user, password)
-}
-
-func create() {
-	// Workaround, since daocloud influxdb haven't privision an instance
-	// create the db instance here
 	q := client.Query{
 		Command:  fmt.Sprintf("create database %s", db),
 		Database: db,
 	}
-
-	// ignore the error of existing database
+	fmt.Println("runnign the DB query!!!")
 	ic.Query(q)
+	fmt.Println("Initilization is Finished!!")
 }
 
-func insert() {
+func StoreDataInfluxdb(count int) error {
+	startTime := time.Now()
 	var (
 		shapes     = []string{"circle", "rectangle", "square", "triangle"}
 		colors     = []string{"red", "blue", "green", "yellow"}
@@ -70,18 +71,24 @@ func insert() {
 			Time: time.Now(),
 		}
 	}
+		bps := client.BatchPoints{
+			Points:          pts,
+			Database:        db,
+		}
 
-	bps := client.BatchPoints{
-		Points:          pts,
-		Database:        db,
-		RetentionPolicy: "default",
-	}
-
-	_, err := ic.Write(bps)
-	if err != nil {
-		log.Println("Insert data error:")
-		log.Fatal(err)
-	}
+		_, err := ic.Write(bps)
+		if err != nil {
+			log.Println("Insert data error:")
+			log.Fatal(err)
+			return err
+		}
+	endTime := time.Now()
+	diff := endTime.Sub(startTime).Seconds()
+	fmt.Println("Write Operation Finished for Count::" + "   " + string(count) + "   " + "in Following Seconds")
+	fmt.Println("*************")
+	fmt.Println(diff)
+	fmt.Println("*************")
+	return nil
 }
 
 func query() map[string]string {
@@ -108,10 +115,10 @@ func query() map[string]string {
 	}
 
 	serie := result.Series[0]
-	if serie.Err != nil {
-		log.Println("Serie error, ", serie.Err)
-		return nil
-	}
+	// if serie.Err != nil {
+	// 	log.Println("Serie error, ", serie.Err)
+	// 	return nil
+	// }
 
 	return serie.Tags
 }
@@ -123,28 +130,28 @@ func hello(res http.ResponseWriter, req *http.Request) {
 
 //
 // func main() {
-// 	host = "influx"
-// 	port = "8086"
-// 	db = "test"
-// 	user = "test"
-// 	password = "test"
-//
-// 	// workaround, daocloud influxdb have not privision db instance
-// 	if len(db) == 0 {
-// 		db = "mydb"
-// 	}
-//
-// 	connect()
-// 	log.Println("Successfully connect to influxdb ...")
-//
-// 	// prepare data
-// 	create()
-// 	insert()
-//
-// 	http.HandleFunc("/", hello)
-//
-// 	log.Println("Start listening...")
-// 	if err := http.ListenAndServe(":80", nil); err != nil {
-// 		log.Fatal(err)
-// 	}
+	// host = "influx"
+	// port = "8086"
+	// db = "test"
+	// user = "test"
+	// password = "test"
+	//
+	// // workaround, daocloud influxdb have not privision db instance
+	// if len(db) == 0 {
+	// 	db = "mydb"
+	// }
+	//
+	// connect()
+	// log.Println("Successfully connect to influxdb ...")
+	//
+	// // prepare data
+	// create()
+	// insert()
+	//
+	// http.HandleFunc("/", hello)
+	//
+	// log.Println("Start listening...")
+	// if err := http.ListenAndServe(":80", nil); err != nil {
+	// 	log.Fatal(err)
+	// }
 // }

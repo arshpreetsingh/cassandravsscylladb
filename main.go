@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net/http"
+	//"log"
+//	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -12,30 +12,10 @@ import (
 
 func main() {
 
-	host = "influx"
-	port = "8086"
-	db = "test"
-	user = "test"
-	password = "test"
-
-	// workaround, daocloud influxdb have not privision db instance
-	if len(db) == 0 {
-		db = "mydb"
-	}
-
-	connect()
-	log.Println("Successfully connect to influxdb ...")
-
 	// prepare data
-	create()
-	insert()
+	// create()
+	// insert()
 
-	http.HandleFunc("/", hello)
-
-	log.Println("Start listening...")
-	if err := http.ListenAndServe(":80", nil); err != nil {
-		log.Fatal(err)
-	}
 	// go build -o main main.go
 	//  go run main.go Cassandra write
 
@@ -57,6 +37,17 @@ func main() {
 		}
 		fmt.Println("Cassandra Successfuly Initilized!")
 		StoreDataCassandra(count)
+	} else if os.Args[1] == "Influxdb" && os.Args[2] == "Write" {
+		fmt.Println(os.Args[1], os.Args[2])
+		fmt.Println("Starting Writing Operation For Influxdb")
+		InitInfluxdb()
+		count, err := strconv.Atoi(os.Args[3])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(2)
+		}
+		fmt.Println("Timescaledb Initilized successfully")
+	  StoreDataInfluxdb(count)
 	} else if os.Args[1] == "Timescaledb" && os.Args[2] == "Write" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Writing Operation For TimeScaledb")

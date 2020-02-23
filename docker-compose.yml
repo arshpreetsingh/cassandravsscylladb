@@ -60,6 +60,18 @@ services:
       INFLUXDB_USER_PASSWORD: "test"
 
 
+  test_influxdb:
+    build:
+      context: .
+      dockerfile: test.dockerfile
+    tty: true
+    container_name: test
+    links:
+      - influxdb
+    networks:
+      - default
+
+
   test_cassandra:
     build:
       context: .
