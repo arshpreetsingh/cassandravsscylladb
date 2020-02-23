@@ -58,6 +58,8 @@ services:
       INFLUXDB_DB: "test"
       INFLUXDB_USER: "test"
       INFLUXDB_USER_PASSWORD: "test"
+      INFLUXDB_HTTP_MAX_BODY_SIZE: 0
+      INFLUXDB_HTTP_MAX_CONCURRENT_WRITE_LIMIT: 0
 
 
   test_influxdb:

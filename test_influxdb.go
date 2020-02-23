@@ -69,22 +69,22 @@ func StoreDataInfluxdb(count int) error {
 				"DomainName": data.DomainName,
 				"Gender": data.Gender,
 				"Language": data.Language,
+				"value":i,
 			},
 			Time: time.Now(),
 		}
 	}
 
-		bps := client.BatchPoints{
-			Points:          pts,
-			Database:        db,
-		}
-
-		_, err := ic.Write(bps)
-		if err != nil {
-			log.Println("Insert data error:")
-			log.Fatal(err)
-			return err
-		}
+	bps := client.BatchPoints{
+		Points:          pts,
+		Database:        db,
+	}
+	_, err := ic.Write(bps)
+	if err != nil {
+		log.Println("Insert data error:")
+		log.Fatal(err)
+		return err
+	}
 	endTime := time.Now()
 	diff := endTime.Sub(startTime).Seconds()
 	fmt.Println("Write Operation Finished for Count::" + "   " + string(count) + "   " + "in Following Seconds")
