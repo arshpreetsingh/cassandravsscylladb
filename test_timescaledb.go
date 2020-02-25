@@ -90,21 +90,19 @@ func FetchDataTimescaledb(accountid int) {
 		log.Panic("Error! Unable to Connect to DB:" + err.Error())
 	}
 	startTime := time.Now()
-	rows, err := dbcon.Query(`SELECT account_id, name, full_name,product_name,email,email_subject, email_body,user_agent, company,
+	rows, err := dbcon.Exec(`SELECT account_id, name, full_name,product_name,email,email_subject, email_body,user_agent, company,
     domain_name,gender,language, created_at from user_test WHERE account_id = $1`, accountid)
 	if err != nil {
 		fmt.Printf("Not able to fetch data from Database: %v", err)
 	}
 	fmt.Println("rows")
-	for rows.Next() {
-		fmt.Println("rows")
-		fmt.Println(rows)
-		// err := rows.Scan(&accountid)
-		// if err != nil {
-		// 	fmt.Printf("Not able to fetch required data for classification: %v", err)
-		// }
-		//	fmt.Println("account_ID", accountid)
-	}
+	fmt.Println("rows")
+	fmt.Println(rows)
+	// err := rows.Scan(&accountid)
+	// if err != nil {
+	// 	fmt.Printf("Not able to fetch required data for classification: %v", err)
+	// }
+	//	fmt.Println("account_ID", accountid)
 	endTime := time.Now()
 	diff := endTime.Sub(startTime).Seconds()
 	fmt.Println("Read Operation Finished in Following Seconds")

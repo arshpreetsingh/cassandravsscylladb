@@ -1,9 +1,10 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
 	//"log"
-//	"net/http"
+	//	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -26,7 +27,7 @@ func main() {
 	// flag.StringVar(&TestName,"TestName","","Enter Your TestName")
 	// flag.Parse()
 	//
-	InitIgnite()
+	//	InitIgnite()
 	if os.Args[1] == "Cassandra" && os.Args[2] == "Write" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Writing Operation For Cassandra")
@@ -37,7 +38,62 @@ func main() {
 			os.Exit(2)
 		}
 		fmt.Println("Cassandra Successfuly Initilized!")
-		StoreDataCassandra(count)
+		var timeTaken float64
+		var totalTaken []float64
+		var CSVData []string
+		startTime := time.Now()
+		sum := float64(0)
+		countTest := 1000
+		file, err := os.Create("/etc/test/csv/result_cassandra.csv")
+		if err != nil {
+			fmt.Println("error", err)
+		}
+		defer file.Close()
+		writer := csv.NewWriter(file)
+		defer writer.Flush()
+		for queryCount := 0; queryCount < count; queryCount++ {
+			timeTaken, err = StoreDataCassandra()
+			if err != nil {
+				fmt.Println("error occoured!!", err)
+			}
+			totalTaken = append(totalTaken, timeTaken)
+			if queryCount%countTest == 0 {
+				//fmt.Println("queryCount%countTest", queryCount%countTest) Should be always Zero
+				countTest := countTest + 1000
+				fmt.Println("this is count Test", countTest)
+				for _, value := range totalTaken {
+					sum = sum + value
+				}
+				value1 := fmt.Sprintf("%f", sum)
+				value2 := strconv.Itoa(queryCount)
+				CSVData = append(CSVData, value2, value1)
+				//	CSVData = append(CSVData,
+				err2 := writer.Write(CSVData)
+				if err2 != nil {
+					fmt.Println("error occoured in CSV", err)
+				}
+				fmt.Println("this is query count", queryCount)
+				fmt.Println("Number of operations", len(totalTaken))
+				fmt.Println("Time Taken", sum)
+				fmt.Println("CSVData*********", CSVData)
+				totalTaken = nil
+				sum = 0.0
+				CSVData = nil
+			}
+		}
+		totalDiff := time.Now().Sub(startTime).Seconds()
+		fmt.Println(totalDiff)
+	} else if os.Args[1] == "Cassandra" && os.Args[2] == "WriteShoot" {
+
+		fmt.Println(os.Args[1], os.Args[2])
+		fmt.Println("Starting Writing Operation For Cassandra")
+		InitCassandra()
+		for {
+			_, err := StoreDataCassandra()
+			if err != nil {
+				fmt.Println("error occoured!!", err)
+			}
+		}
 	} else if os.Args[1] == "Influxdb" && os.Args[2] == "Write" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Writing Operation For Influxdb")
@@ -48,7 +104,7 @@ func main() {
 			os.Exit(2)
 		}
 		fmt.Println("Timescaledb Initilized successfully")
-	  StoreDataInfluxdb(count)
+		StoreDataInfluxdb(count)
 	} else if os.Args[1] == "Timescaledb" && os.Args[2] == "Write" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Writing Operation For TimeScaledb")

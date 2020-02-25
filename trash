@@ -124,10 +124,30 @@ CONTAINER ID        NAME                CPU %               MEM USAGE / LIMIT   
 ed1c52a48c3b        scylla              50.01%              303.7MiB / 1.952GiB   15.19%              51.3MB / 6.6MB      8.54MB / 704MB      31
 
 
-
+docker-compose run test_timescaledb Scylladb ReadMultiple 100
 Multiple READ Opeartion Finised in Following Seconds
 *************
 195.3558651
 *************
 CONTAINER ID        NAME                              CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
 b34c3ce9c574        cassandravsscylladb_cassandra_1   66.94%              1.095GiB / 1.952GiB   56.10%              124MB / 14.9MB      560MB / 645MB       49
+
+
+
+
+
+docker-compose run test_influxdb Influxdb Write 100000
+*************
+11.4838741
+*************
+CONTAINER ID        NAME                CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+091d0c4937db        influxdb            0.11%               846.4MiB / 1.952GiB   42.34%              115MB / 1.09MB      43MB / 403MB        10
+
+
+
+
+
+Write Operation Finished for Count::   𘚠   in Following Seconds
+*************
+89.0376041
+*************

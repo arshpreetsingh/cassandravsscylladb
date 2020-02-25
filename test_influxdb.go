@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 	"log"
-//	"net/http"
+	//	"net/http"
 	"net/url"
 	"time"
 
-	 "github.com/influxdata/influxdb1-client"
-//	client "github.com/influxdata/influxdb1-client/v2"
+	"github.com/influxdata/influxdb1-client"
+	//	client "github.com/influxdata/influxdb1-client/v2"
 )
 
 var ic *client.Client
@@ -18,7 +18,6 @@ var port string
 var db string
 var user string
 var password string
-
 
 func InitInfluxdb() {
 	host = "influxdb"
@@ -57,27 +56,27 @@ func StoreDataInfluxdb(count int) error {
 		pts[i] = client.Point{
 			Measurement: "shapes",
 			Fields: map[string]interface{}{
-				"AccountID": data.AccountID,
-				"Name": data.Name,
-				"FullName": data.FullName,
-				"ProductName": data.ProductName,
-				"Email": data.Email,
+				"AccountID":    data.AccountID,
+				"Name":         data.Name,
+				"FullName":     data.FullName,
+				"ProductName":  data.ProductName,
+				"Email":        data.Email,
 				"EmailSubject": data.EmailSubject,
-				"EmailBody": data.EmailBody,
-				"UserAgent": data.UserAgent,
-				"Company": data.Company,
-				"DomainName": data.DomainName,
-				"Gender": data.Gender,
-				"Language": data.Language,
-				"value":i,
+				"EmailBody":    data.EmailBody,
+				"UserAgent":    data.UserAgent,
+				"Company":      data.Company,
+				"DomainName":   data.DomainName,
+				"Gender":       data.Gender,
+				"Language":     data.Language,
+				"value":        i,
 			},
 			Time: time.Now(),
 		}
 	}
 
 	bps := client.BatchPoints{
-		Points:          pts,
-		Database:        db,
+		Points:   pts,
+		Database: db,
 	}
 	_, err := ic.Write(bps)
 	if err != nil {
@@ -104,6 +103,11 @@ func FetchDataInflux(count int) error {
 	if err != nil {
 		log.Println("Error, ", err)
 	}
-	fmt.Println(response)
+	result := response.Results[0]
+	if result.Err != nil {
+		log.Println("Result error, ", result.Err)
+		return nil
+	}
+	fmt.Println(result)
 	return nil
 }

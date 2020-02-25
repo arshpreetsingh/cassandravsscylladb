@@ -10,7 +10,7 @@ services:
   timescaledb:
     image: timescale/timescaledb:1.2.1-pg11
     ports:
-    - "5432:5432"
+    - 5432
     #command: postgres -c 'max_connections=200'
     environment:
        POSTGRES_DB: test
@@ -20,6 +20,54 @@ services:
       - default
     volumes:
       - /dev/shm:/dev/shm
+
+  pgpool:
+    image: bitnami/pgpool:4
+    ports:
+      - 5432:5432
+    networks:
+      - default
+    links:
+      - timescaledb
+    environment:
+      - PGPOOL_BACKEND_NODES=0:timescaledb:5432
+      - PGPOOL_SR_CHECK_USER=maropost
+      - PGPOOL_SR_CHECK_PASSWORD=Maro123!
+      - PGPOOL_ENABLE_LDAP=no
+      - PGPOOL_POSTGRES_USERNAME=postgres
+      - PGPOOL_POSTGRES_PASSWORD=Maro123!
+      - PGPOOL_ADMIN_USERNAME=admin
+      - PGPOOL_ADMIN_PASSWORD=Maro123!
+      - PGPOOL_ENABLE_LOAD_BALANCING=yes
+      - PGPOOL_MAX_POOL=1000
+
+# 3 node cluster
+# If you see exit code 137 (OOM killer) then ensure Docker has access to more resources
+  cassandra-seed:
+    container_name: cassandra-seed-node
+    image: cassandra:3.11.0
+    ports:
+      - "9042:9042"   # Native transport
+      - "7199:7199"   # JMX
+      - "9160:9160"   # Thrift clients
+
+  cassandra-node-1:
+    image: cassandra:3.11.0
+    command: /bin/bash -c "echo 'Waiting for seed node' && sleep 30 && /docker-entrypoint.sh cassandra -f"
+    environment:
+      - "CASSANDRA_SEEDS=cassandra-seed-node"
+    depends_on:
+      - "cassandra-seed"
+
+  # you cannot have multiple nodes join the cluster at the same time when
+  # cassandra.consistent.rangemovement is true so we further delay it to give it time to stabilize
+  cassandra-node-2:
+    image: cassandra:3.11.0
+    command: /bin/bash -c "echo 'Waiting for seed node' && sleep 80 && /docker-entrypoint.sh cassandra -f"
+    environment:
+      - "CASSANDRA_SEEDS=cassandra-seed-node"
+    depends_on:
+      - "cassandra-seed"
 
   cassandra:
     image: cassandra
@@ -103,7 +151,9 @@ services:
     tty: true
     container_name: test
     links:
-      - cassandra
+      - cassandra-seed
+    volumes:
+      - ./:/etc/test/csv
     networks:
       - default
 

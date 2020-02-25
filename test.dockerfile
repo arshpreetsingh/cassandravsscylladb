@@ -5,5 +5,5 @@ WORKDIR /etc/test
 # Build Service as Executable:
 RUN go get -v
 RUN go build -o testService -ldflags="-w -s"
-#RUN tail -f /dev/null
 ENTRYPOINT ["./testService"]
+#RUN tail -f /dev/null
