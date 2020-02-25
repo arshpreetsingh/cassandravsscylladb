@@ -26,7 +26,7 @@ func InitCassandra() {
 		panic(err)
 	}
 
-	if err := session_cassandra.Query("CREATE KEYSPACE IF NOT EXISTS test WITH REPLICATION = {'class' : 'NetworkTopologyStrategy','replication_factor' : 3};").Exec(); err != nil {
+	if err := session_cassandra.Query("CREATE KEYSPACE IF NOT EXISTS test WITH REPLICATION = {'class' : 'SimpleStrategy','replication_factor' : 3};").Exec(); err != nil {
 		log.Println(context.Background(), "Error for creating a keyspace[InitCassandra]:", err)
 		panic(err)
 	}
@@ -85,20 +85,17 @@ func StoreDataCassandra() (float64, error) {
 	return diff, nil
 }
 
-func FetchDataCassandra(accountid int) {
+func FetchDataCassandra(accountid int) (float64, error){
 	startTime := time.Now()
 	query := fmt.Sprintf("SELECT account_id, name, full_name,product_name,email,email_subject, email_body,user_agent, company, domain_name,gender,language, created_at, updatedat from test.user_table WHERE account_id = ?")
 	iter := session_cassandra.Query(query, accountid).Iter()
-	endTime := time.Now()
-	diff := endTime.Sub(startTime).Seconds()
-	fmt.Println("Read Operation Finished in Following Seconds")
-	fmt.Println("*************")
-	fmt.Println(diff)
-	fmt.Println("*************")
 	for iter.Scan(&accountid) {
 		fmt.Println("account_ID", accountid)
 	}
 	iter.Close()
+	endTime := time.Now()
+	diff := endTime.Sub(startTime).Seconds()
+	return diff, nil
 }
 
 func FetchDataCassandraComplex(accountid int) {

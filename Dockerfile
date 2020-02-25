@@ -7,7 +7,7 @@ LABEL maintainer="Khagura https://medium.com/@arshpreetsingh"
 
 # Install SSL ca certificates.
 # Ca-certificates is required to call HTTPS endpoints.
-RUN apt-get update && apt-get install ca-certificates tzdata tar curl python && update-ca-certificates
+RUN apt-get update && apt-get -y install ca-certificates tzdata tar curl python && update-ca-certificates
 
 #Adding all timezones and Setting UTC as Default
 RUN echo "UTC" >  /etc/timezone
