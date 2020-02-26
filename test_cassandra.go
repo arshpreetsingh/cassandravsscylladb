@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/gocql/gocql"
@@ -20,7 +21,7 @@ func InitCassandra() {
 	cluster.ProtoVersion = 4
 	//	cluster.Keyspace = keySpace
 	cluster.ConnectTimeout = time.Second * 10
-	//cluster.Authenticator = gocql.PasswordAuthenticator{Username: "Username", Password: "Password"} //replace the username and password fields with their real settings.
+	//cluster.Authenticator = gocql.PasswordAuthenticator{Usernadocker-compose --versionme: "Username", Password: "Password"} //replace the username and password fields with their real settings.
 	session_cassandra, err = cluster.CreateSession()
 	if err != nil {
 		panic(err)
@@ -68,6 +69,34 @@ func InitCassandra() {
 // 	return nil
 // }
 
+// func worker(id int, jobsChnl <-chan int, resultsChan chan<- int) { // Don't forget to see small difference between Sender and Receiver Channles. :) Quite hacky it is
+//
+// 	for j := range jobsChnl {
+// 		fmt.Println(id, "*** This is ID of the JOB", j, "*** and this is job")
+// 		time.Sleep(time.Second * 30)
+// 		resultsChan <- j * 2
+// 	}
+// }
+
+func StoreDataCassandraWorker(wg *sync.WaitGroup) {
+	for job := range Jobs {
+		data := GenerateData()
+		fmt.Println(data)
+		if err := session_cassandra.Query(`INSERT INTO test.user ( account_id, name, full_name,product_name,email,
+		 email_subject, email_body,user_agent, company, domain_name,gender,language,
+		created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?)`,
+			data.AccountID, data.Name, data.FullName, data.ProductName, data.Email, data.EmailSubject,
+			data.EmailBody, data.UserAgent, data.Company, data.DomainName, data.Gender, data.Language, data.CreatedAt, data.Updatedat).Exec(); err != nil {
+			fmt.Println("Error! unable to insert data into cassandra", err)
+		}
+		var err error
+		time.Sleep(2 * time.Second)
+		output := JobResult{job, err}
+		Results <- output
+	}
+	wg.Done() // Only return when Done...! Means when "results" channel will receive Value!!
+}
+
 func StoreDataCassandra() (float64, error) {
 	startTime := time.Now()
 	//countTimeStart := time.Now()
@@ -85,17 +114,20 @@ func StoreDataCassandra() (float64, error) {
 	return diff, nil
 }
 
-func FetchDataCassandra(accountid int) (float64, error){
+func FetchDataCassandra(accountid int) {
 	startTime := time.Now()
 	query := fmt.Sprintf("SELECT account_id, name, full_name,product_name,email,email_subject, email_body,user_agent, company, domain_name,gender,language, created_at, updatedat from test.user_table WHERE account_id = ?")
 	iter := session_cassandra.Query(query, accountid).Iter()
+	endTime := time.Now()
+	diff := endTime.Sub(startTime).Seconds()
+	fmt.Println("Read Operation Finished in Following Seconds")
+	fmt.Println("*************")
+	fmt.Println(diff)
+	fmt.Println("*************")
 	for iter.Scan(&accountid) {
 		fmt.Println("account_ID", accountid)
 	}
 	iter.Close()
-	endTime := time.Now()
-	diff := endTime.Sub(startTime).Seconds()
-	return diff, nil
 }
 
 func FetchDataCassandraComplex(accountid int) {
