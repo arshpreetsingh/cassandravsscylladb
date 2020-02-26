@@ -86,15 +86,21 @@ func main() {
 
 	} else if os.Args[1] == "Cassandra" && os.Args[2] == "WriteShoot" {
 
-		numberofjobs := 100000
+		var numberofjobs int64
+		numberofjobs = 9223372036854775807
 		go SubmitJobs(numberofjobs)
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Writing Operation For Cassandra")
 		InitCassandra()
+		count, err := strconv.Atoi(os.Args[3])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(2)
+		}
 		// Now start workers
 		done := make(chan bool)
 		go Result(done)
-		numberofworkers := 10
+		numberofworkers := count
 		go CreateWorkerPool(numberofworkers)
 		<-done
 	} else if os.Args[1] == "Influxdb" && os.Args[2] == "Write" {

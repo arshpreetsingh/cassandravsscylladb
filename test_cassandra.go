@@ -37,60 +37,18 @@ func InitCassandra() {
 	}
 }
 
-//
-// func StoreDataCassandra(count int) error {
-// 	startTime := time.Now()
-// 	countTest := 1000
-// 	for i := 0; i < count; i++ {
-// 		countTimeStart := time.Now()
-// 		data := GenerateData()
-// 		if err := session_cassandra.Query(`INSERT INTO test.user ( account_id, name, full_name,product_name,email,
-//      email_subject, email_body,user_agent, company, domain_name,gender,language,
-//     created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?)`,
-// 			data.AccountID, data.Name, data.FullName, data.ProductName, data.Email, data.EmailSubject,
-// 			data.EmailBody, data.UserAgent, data.Company, data.DomainName, data.Gender, data.Language, data.CreatedAt, data.Updatedat).Exec(); err != nil {
-// 			log.Println("Error! unable to insert data into cassandra", err)
-// 			return err
-// 		}
-// 		if i%countTest == 0 {
-// 			countTest := countTest + 1000
-// 			fmt.Println(countTest)
-// 			countTime := time.Now()
-// 			secDiff := countTime.Sub(startTime).Seconds()
-// 			fmt.Println("timke taken for Every 1000 operations", secDiff)
-// 		}
-// 	}
-// 	endTime := time.Now()
-// 	diff := endTime.Sub(startTime).Seconds()
-// 	fmt.Println("Write Operation Finished for Count::" + "   " + string(count) + "   " + "in Following Seconds")
-// 	fmt.Println("*************")
-// 	fmt.Println(diff)
-// 	fmt.Println("*************")
-// 	return nil
-// }
-
-// func worker(id int, jobsChnl <-chan int, resultsChan chan<- int) { // Don't forget to see small difference between Sender and Receiver Channles. :) Quite hacky it is
-//
-// 	for j := range jobsChnl {
-// 		fmt.Println(id, "*** This is ID of the JOB", j, "*** and this is job")
-// 		time.Sleep(time.Second * 30)
-// 		resultsChan <- j * 2
-// 	}
-// }
-
 func StoreDataCassandraWorker(wg *sync.WaitGroup) {
 	for job := range Jobs {
 		data := GenerateData()
-		fmt.Println(data)
-		if err := session_cassandra.Query(`INSERT INTO test.user ( account_id, name, full_name,product_name,email,
+		err := session_cassandra.Query(`INSERT INTO test.user ( account_id, name, full_name,product_name,email,
 		 email_subject, email_body,user_agent, company, domain_name,gender,language,
 		created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?)`,
 			data.AccountID, data.Name, data.FullName, data.ProductName, data.Email, data.EmailSubject,
-			data.EmailBody, data.UserAgent, data.Company, data.DomainName, data.Gender, data.Language, data.CreatedAt, data.Updatedat).Exec(); err != nil {
+			data.EmailBody, data.UserAgent, data.Company, data.DomainName, data.Gender, data.Language, data.CreatedAt, data.Updatedat).Exec()
+		if err != nil {
 			fmt.Println("Error! unable to insert data into cassandra", err)
 		}
-		var err error
-		time.Sleep(2 * time.Second)
+		time.Sleep(1 * time.Second)
 		output := JobResult{job, err}
 		Results <- output
 	}

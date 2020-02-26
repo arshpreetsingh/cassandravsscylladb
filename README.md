@@ -12,10 +12,9 @@ docker-compose build
 
 ```
 # Say you want to Read Multiple Benchmarks on Cassandra
-docker-compose run test_cassandra Cassandra Write 100000
-docker-compose run test_cassandra Cassandra WriteShoot
-docker-compose run test_cassandra Cassandra ReadShoot
-docker-compose run test_cassandra Cassandra Read 100000
+docker-compose run test_cassandra Cassandra Write 1000000
+docker-compose run test_cassandra Cassandra WriteShoot 1000
+docker-compose run test_cassandra Cassandra Read 100
 docker-compose run test_cassandra Cassandra ReadMultiple 100
 docker-compose run test_cassandra Cassandra ReadComplex 100
 docker-compose run test_influxdb Influxdb Write 100

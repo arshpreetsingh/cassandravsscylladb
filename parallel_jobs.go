@@ -9,7 +9,7 @@ import (
 // what is structure of task...
 
 type Job struct {
-	jobID    int
+	jobID    int64
 	randomNo int
 }
 
@@ -33,8 +33,9 @@ func CreateWorkerPool(noOfWorkers int) {
 	close(Results)
 }
 
-func SubmitJobs(noOfJobs int) { // Send the Jobs to Channel so able to Process those, Think of it liKe Worker Pool!!
-	for i := 0; i < noOfJobs; i++ {
+func SubmitJobs(noOfJobs int64) { // Send the Jobs to Channel so able to Process those, Think of it liKe Worker Pool!!
+	var i int64
+	for i = 0; i < noOfJobs; i++ {
 		randno := rand.Intn(999)
 		job := Job{i, randno}
 		Jobs <- job
@@ -44,7 +45,8 @@ func SubmitJobs(noOfJobs int) { // Send the Jobs to Channel so able to Process t
 
 func Result(done chan bool) {
 	for result := range Results {
-		fmt.Println("Here we are getting results of all the Submitted Jobs!!")
+		fmt.Println("It is Good if nil")
+		fmt.Println(result.err)
 		if result.err != nil {
 			done <- false
 		}
