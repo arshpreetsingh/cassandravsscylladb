@@ -115,16 +115,61 @@ func main() {
 		fmt.Println("Timescaledb Initilized successfully")
 		StoreDataInfluxdb(count)
 	} else if os.Args[1] == "Timescaledb" && os.Args[2] == "Write" {
+
 		fmt.Println(os.Args[1], os.Args[2])
-		fmt.Println("Starting Writing Operation For TimeScaledb")
+		fmt.Println("Starting writing Operation For Cassandra")
 		InitTimeScale()
 		count, err := strconv.Atoi(os.Args[3])
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(2)
 		}
-		fmt.Println("Timescaledb Initilized successfully")
-		StoreDataTimeScaleDB(count)
+		fmt.Println("Cassandra Successfuly Initilized!")
+		var timeTaken float64
+		var totalTaken []float64
+		var CSVData []string
+		startTime := time.Now()
+		sum := float64(0)
+		countTest := 1000
+		file, err := os.Create("/etc/test/csv/result_timescaledb_write.csv")
+		if err != nil {
+			fmt.Println("error", err)
+		}
+		defer file.Close()
+		writer := csv.NewWriter(file)
+		defer writer.Flush()
+		for queryCount := 0; queryCount < count; queryCount++ {
+			timeTaken, err = StoreDataTimeScaleDB(queryCount)
+			if err != nil {
+				fmt.Println("error occoured!!", err)
+			}
+			totalTaken = append(totalTaken, timeTaken)
+			if queryCount%countTest == 0 {
+				//fmt.Println("queryCount%countTest", queryCount%countTest) Should be always Zero
+				countTest := countTest + 1000
+				fmt.Println("this is count Test", countTest)
+				for _, value := range totalTaken {
+					sum = sum + value
+				}
+				value1 := fmt.Sprintf("%f", sum)
+				value2 := strconv.Itoa(queryCount)
+				CSVData = append(CSVData, value2, value1)
+				//	CSVData = append(CSVData,
+				err2 := writer.Write(CSVData)
+				if err2 != nil {
+					fmt.Println("error occoured in CSV", err)
+				}
+				fmt.Println("this is query count", queryCount)
+				fmt.Println("Number of operations", len(totalTaken))
+				fmt.Println("Time Taken", sum)
+				fmt.Println("CSVData*********", CSVData)
+				totalTaken = nil
+				sum = 0.0
+				CSVData = nil
+			}
+		}
+		totalDiff := time.Now().Sub(startTime).Seconds()
+		fmt.Println(totalDiff)
 	} else if os.Args[1] == "Scylladb" && os.Args[2] == "Write" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Writing Operation For Scylladb")
@@ -160,15 +205,59 @@ func main() {
 		FetchDataInflux(count)
 	} else if os.Args[1] == "Timescaledb" && os.Args[2] == "Read" {
 		fmt.Println(os.Args[1], os.Args[2])
-		fmt.Println("Starting Writing Operation For Scylladb")
+		fmt.Println("Starting Reading Operation For Cassandra")
 		InitTimeScale()
 		count, err := strconv.Atoi(os.Args[3])
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(2)
 		}
-		fmt.Println("Timescaledb Successfuly Initilized!")
-		FetchDataTimescaledb(count)
+		fmt.Println("Cassandra Successfuly Initilized!")
+		var timeTaken float64
+		var totalTaken []float64
+		var CSVData []string
+		startTime := time.Now()
+		sum := float64(0)
+		countTest := 1000
+		file, err := os.Create("/etc/test/csv/result_timescaledb_read.csv")
+		if err != nil {
+			fmt.Println("error", err)
+		}
+		defer file.Close()
+		writer := csv.NewWriter(file)
+		defer writer.Flush()
+		for queryCount := 0; queryCount < count; queryCount++ {
+			timeTaken, err = FetchDataTimescaledb(queryCount)
+			if err != nil {
+				fmt.Println("error occoured!!", err)
+			}
+			totalTaken = append(totalTaken, timeTaken)
+			if queryCount%countTest == 0 {
+				//fmt.Println("queryCount%countTest", queryCount%countTest) Should be always Zero
+				countTest := countTest + 1000
+				fmt.Println("this is count Test", countTest)
+				for _, value := range totalTaken {
+					sum = sum + value
+				}
+				value1 := fmt.Sprintf("%f", sum)
+				value2 := strconv.Itoa(queryCount)
+				CSVData = append(CSVData, value2, value1)
+				//	CSVData = append(CSVData,
+				err2 := writer.Write(CSVData)
+				if err2 != nil {
+					fmt.Println("error occoured in CSV", err)
+				}
+				fmt.Println("this is query count", queryCount)
+				fmt.Println("Number of operations", len(totalTaken))
+				fmt.Println("Time Taken", sum)
+				fmt.Println("CSVData*********", CSVData)
+				totalTaken = nil
+				sum = 0.0
+				CSVData = nil
+			}
+		}
+		totalDiff := time.Now().Sub(startTime).Seconds()
+		fmt.Println(totalDiff)
 	} else if os.Args[1] == "Timescaledb" && os.Args[2] == "ReadMultiple" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Writing Operation For Scylladb")
@@ -238,7 +327,6 @@ func main() {
 		for queryCount := 0; queryCount < count; queryCount++ {
 			timeTaken, err = FetchDataCassandra(queryCount)
 			if err != nil {
-				du
 				fmt.Println("error occoured!!", err)
 			}
 			totalTaken = append(totalTaken, timeTaken)
