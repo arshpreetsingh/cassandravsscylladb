@@ -55,6 +55,19 @@ func StoreDataCassandraWorker(wg *sync.WaitGroup) {
 	wg.Done() // Only return when Done...! Means when "results" channel will receive Value!!
 }
 
+func FetchDataCassandraWorker(accountid int, wg *sync.WaitGroup) {
+	for job := range Jobs {
+		query := fmt.Sprintf("SELECT account_id, name, full_name,product_name,email,email_subject, email_body,user_agent, company, domain_name,gender,language, created_at, updatedat from test.user_table WHERE account_id = ?")
+		err := session_cassandra.Query(query, accountid).Scan(&accountid)
+		if err != nil {
+			fmt.Println("error came in reading data", err)
+		}
+		output := JobResult{job, err}
+		Results <- output
+	}
+	wg.Done()
+}
+
 func StoreDataCassandra() (float64, error) {
 	startTime := time.Now()
 	//countTimeStart := time.Now()
@@ -72,20 +85,17 @@ func StoreDataCassandra() (float64, error) {
 	return diff, nil
 }
 
-func FetchDataCassandra(accountid int) {
+func FetchDataCassandra(accountid int) (float64, error) {
 	startTime := time.Now()
 	query := fmt.Sprintf("SELECT account_id, name, full_name,product_name,email,email_subject, email_body,user_agent, company, domain_name,gender,language, created_at, updatedat from test.user_table WHERE account_id = ?")
-	iter := session_cassandra.Query(query, accountid).Iter()
+	err := session_cassandra.Query(query, accountid).Scan(&accountid)
+	if err != nil {
+		fmt.Println("error came in reading data", err)
+		return 2.2, err
+	}
 	endTime := time.Now()
 	diff := endTime.Sub(startTime).Seconds()
-	fmt.Println("Read Operation Finished in Following Seconds")
-	fmt.Println("*************")
-	fmt.Println(diff)
-	fmt.Println("*************")
-	for iter.Scan(&accountid) {
-		fmt.Println("account_ID", accountid)
-	}
-	iter.Close()
+	return diff, nil
 }
 
 func FetchDataCassandraComplex(accountid int) {

@@ -19,11 +19,22 @@ type JobResult struct {
 	err error
 }
 
-var Jobs = make(chan Job, 20)          // type of channel which will accept Job{}
-var Results = make(chan JobResult, 20) //type of channel to accept Result{}
+var Jobs = make(chan Job, 1000)          // type of channel which will accept Job{}
+var Results = make(chan JobResult, 1000) //type of channel to accept Result{}
 
 // Now We have to Create Dispatcher which will start all the workers , depends on How many workers we want to start
 func CreateWorkerPool(noOfWorkers int) {
+	var wg sync.WaitGroup
+	for i := 0; i < noOfWorkers; i++ {
+		wg.Add(1)
+		go StoreDataCassandraWorker(&wg) // Run the worker to as Go Routine!!
+	}
+	wg.Wait()
+	close(Results)
+}
+
+// Now We have to Create Dispatcher which will start all the workers , depends on How many workers we want to start
+func CreateWorkerPoolRead(noOfWorkers int) {
 	var wg sync.WaitGroup
 	for i := 0; i < noOfWorkers; i++ {
 		wg.Add(1)
@@ -37,6 +48,7 @@ func SubmitJobs(noOfJobs int64) { // Send the Jobs to Channel so able to Process
 	var i int64
 	for i = 0; i < noOfJobs; i++ {
 		randno := rand.Intn(999)
+		fmt.Println("Job Number::", i)
 		job := Job{i, randno}
 		Jobs <- job
 	}

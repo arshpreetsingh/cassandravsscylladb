@@ -214,15 +214,60 @@ func main() {
 
 	} else if os.Args[1] == "Cassandra" && os.Args[2] == "Read" {
 		fmt.Println(os.Args[1], os.Args[2])
-		fmt.Println("Starting Read Operation For Cassandra")
+		fmt.Println("Starting Reading Operation For Cassandra")
 		InitCassandra()
 		count, err := strconv.Atoi(os.Args[3])
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(2)
 		}
-		fmt.Println("Cassandr Successfuly Initilized!")
-		FetchDataCassandra(count)
+		fmt.Println("Cassandra Successfuly Initilized!")
+		var timeTaken float64
+		var totalTaken []float64
+		var CSVData []string
+		startTime := time.Now()
+		sum := float64(0)
+		countTest := 1000
+		file, err := os.Create("/etc/test/csv/result_cassandra_read.csv")
+		if err != nil {
+			fmt.Println("error", err)
+		}
+		defer file.Close()
+		writer := csv.NewWriter(file)
+		defer writer.Flush()
+		for queryCount := 0; queryCount < count; queryCount++ {
+			timeTaken, err = FetchDataCassandra(queryCount)
+			if err != nil {
+				du
+				fmt.Println("error occoured!!", err)
+			}
+			totalTaken = append(totalTaken, timeTaken)
+			if queryCount%countTest == 0 {
+				//fmt.Println("queryCount%countTest", queryCount%countTest) Should be always Zero
+				countTest := countTest + 1000
+				fmt.Println("this is count Test", countTest)
+				for _, value := range totalTaken {
+					sum = sum + value
+				}
+				value1 := fmt.Sprintf("%f", sum)
+				value2 := strconv.Itoa(queryCount)
+				CSVData = append(CSVData, value2, value1)
+				//	CSVData = append(CSVData,
+				err2 := writer.Write(CSVData)
+				if err2 != nil {
+					fmt.Println("error occoured in CSV", err)
+				}
+				fmt.Println("this is query count", queryCount)
+				fmt.Println("Number of operations", len(totalTaken))
+				fmt.Println("Time Taken", sum)
+				fmt.Println("CSVData*********", CSVData)
+				totalTaken = nil
+				sum = 0.0
+				CSVData = nil
+			}
+		}
+		totalDiff := time.Now().Sub(startTime).Seconds()
+		fmt.Println(totalDiff)
 	} else if os.Args[1] == "Cassandra" && os.Args[2] == "ReadComplex" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Read Operation For Cassandra")
@@ -257,30 +302,24 @@ func main() {
 		fmt.Println(diff)
 		fmt.Println("*************")
 		//FetchDataCassandra(count)
-	} else if os.Args[1] == "Cassandra" && os.Args[2] == "ReadMultiple" {
+	} else if os.Args[1] == "Cassandra" && os.Args[2] == "ReadShoot" {
+		var numberofjobs int64
+		numberofjobs = 9223372036854775807
+		go SubmitJobs(numberofjobs)
 		fmt.Println(os.Args[1], os.Args[2])
-		fmt.Println("Starting Read Operation For Cassandra")
+		fmt.Println("Starting Reading Operation For Cassandra")
 		InitCassandra()
 		count, err := strconv.Atoi(os.Args[3])
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(2)
 		}
-		fmt.Println(count)
-		fmt.Println("Cassandr Successfuly Initilized!")
-		startTime := time.Now()
-		fmt.Println("Multiple Operatin Started")
-		for i := 0; i < 100000; i++ {
-			fmt.Println("hello____________")
-			FetchDataCassandra(100)
-		}
-		endTime := time.Now()
-		diff := endTime.Sub(startTime).Seconds()
-		fmt.Println("Multiple READ Opeartion Finised in Following Seconds")
-		fmt.Println("*************")
-		fmt.Println(diff)
-		fmt.Println("*************")
-
+		// Now start workers
+		done := make(chan bool)
+		go Result(done)
+		numberofworkers := count
+		go CreateWorkerPoolRead(numberofworkers)
+		<-done
 	} else if os.Args[1] == "Scylladb" && os.Args[2] == "ReadMultiple" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Read Operation For Cassandra")
