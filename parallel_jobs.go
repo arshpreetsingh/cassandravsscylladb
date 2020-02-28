@@ -34,6 +34,17 @@ func CreateWorkerPool(noOfWorkers int) {
 }
 
 // Now We have to Create Dispatcher which will start all the workers , depends on How many workers we want to start
+func CreateWorkerPoolTimeScale(noOfWorkers int) {
+	var wg sync.WaitGroup
+	for i := 0; i < noOfWorkers; i++ {
+		wg.Add(1)
+		go StoreDataTimeScaleDBWorker(&wg) // Run the worker to as Go Routine!!
+	}
+	wg.Wait()
+	close(Results)
+}
+
+// Now We have to Create Dispatcher which will start all the workers , depends on How many workers we want to start
 func CreateWorkerPoolRead(noOfWorkers int) {
 	var wg sync.WaitGroup
 	for i := 0; i < noOfWorkers; i++ {

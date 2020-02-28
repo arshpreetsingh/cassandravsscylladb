@@ -258,27 +258,26 @@ func main() {
 		}
 		totalDiff := time.Now().Sub(startTime).Seconds()
 		fmt.Println(totalDiff)
-	} else if os.Args[1] == "Timescaledb" && os.Args[2] == "ReadMultiple" {
+	} else if os.Args[1] == "Timescaledb" && os.Args[2] == "WriteShoot" {
+
+		var numberofjobs int64
+		numberofjobs = 9223372036854775807
+		go SubmitJobs(numberofjobs)
 		fmt.Println(os.Args[1], os.Args[2])
-		fmt.Println("Starting Writing Operation For Scylladb")
+		fmt.Println("Starting Writing Operation For Cassandra")
 		InitTimeScale()
 		count, err := strconv.Atoi(os.Args[3])
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(2)
 		}
-		fmt.Println("Timescaledb Successfuly Initilized!")
-		startTime := time.Now()
-		for i := 0; i < 100000; i++ {
-			fmt.Println("__hello")
-			FetchDataTimescaledb(count)
-		}
-		endTime := time.Now()
-		diff := endTime.Sub(startTime).Seconds()
-		fmt.Println("Multiple READ Opeartion Finised in Following Seconds")
-		fmt.Println("*************")
-		fmt.Println(diff)
-		fmt.Println("*************")
+		// Now start workers
+		done := make(chan bool)
+		go Result(done)
+		numberofworkers := count
+		go CreateWorkerPoolTimeScale(numberofworkers)
+		<-done
+
 	} else if os.Args[1] == "Influxdb" && os.Args[2] == "ReadMultiple" {
 		fmt.Println(os.Args[1], os.Args[2])
 		fmt.Println("Starting Reading Operation For InfluxDB")

@@ -6,40 +6,140 @@ services:
       context: .
       dockerfile: Dockerfile
 
-# Timescal Database
-  timescaledb:
+#docker run -d --name timescaledb -p 5432:5432 -e POSTGRES_PASSWORD=password timescale/timescaledb:latest-pg11
+
+  # Timescal Database
+  timescale:
     image: timescale/timescaledb:1.2.1-pg11
     ports:
-    - 5432
+    - "5432:5432"
     #command: postgres -c 'max_connections=200'
     environment:
-       POSTGRES_DB: test
-       POSTGRES_USER: maropost
-       POSTGRES_PASSWORD: Maro123!
+       # POSTGRES_DB: test
+       # POSTGRES_USER: maropost
+       POSTGRES_PASSWORD: password
+       TS_TUNE_MEMORY: 4GB
+       TS_TUNE_NUM_CPUS: 8
     networks:
       - default
     volumes:
       - /dev/shm:/dev/shm
 
-  pgpool:
-    image: bitnami/pgpool:4
-    ports:
-      - 5432:5432
-    networks:
-      - default
-    links:
-      - timescaledb
-    environment:
-      - PGPOOL_BACKEND_NODES=0:timescaledb:5432
-      - PGPOOL_SR_CHECK_USER=maropost
-      - PGPOOL_SR_CHECK_PASSWORD=Maro123!
-      - PGPOOL_ENABLE_LDAP=no
-      - PGPOOL_POSTGRES_USERNAME=postgres
-      - PGPOOL_POSTGRES_PASSWORD=Maro123!
-      - PGPOOL_ADMIN_USERNAME=admin
-      - PGPOOL_ADMIN_PASSWORD=Maro123!
-      - PGPOOL_ENABLE_LOAD_BALANCING=yes
-      - PGPOOL_MAX_POOL=1000
+  # pg-0:
+  #   image: timescale/timescaledb:1.2.1-pg11
+  #   ports:
+  #     - 5432
+  #   # volumes:
+  #   #   - pg_0_data:/bitnami/postgresql
+  #   environment:
+  #     - POSTGRESQL_POSTGRES_PASSWORD=adminpassword
+  #     - POSTGRESQL_USERNAME=customuser
+  #     - POSTGRESQL_PASSWORD=custompassword
+  #     - POSTGRESQL_DATABASE=customdatabase
+  #     - REPMGR_PASSWORD=repmgrpassword
+  #     - REPMGR_PRIMARY_HOST=pg-0
+  #     - REPMGR_PARTNER_NODES=pg-0,pg-1
+  #     - REPMGR_NODE_NAME=pg-0
+  #     - REPMGR_NODE_NETWORK_NAME=pg-0
+  #   volumes:
+  #     - /dev/shm:/dev/shm
+  # pg-1:
+  #   image: timescale/timescaledb:1.2.1-pg11
+  #   ports:
+  #     - 5432
+  #   # volumes:
+  #   #   - pg_1_data:/bitnami/postgresql
+  #   environment:
+  #     - POSTGRESQL_POSTGRES_PASSWORD=adminpassword
+  #     - POSTGRESQL_USERNAME=customuser
+  #     - POSTGRESQL_PASSWORD=custompassword
+  #     - POSTGRESQL_DATABASE=customdatabase
+  #     - REPMGR_PASSWORD=repmgrpassword
+  #     - REPMGR_PRIMARY_HOST=pg-0
+  #     - REPMGR_PARTNER_NODES=pg-0,pg-1
+  #     - REPMGR_NODE_NAME=pg-1
+  #     - REPMGR_NODE_NETWORK_NAME=pg-1
+  #   volumes:
+  #     - /dev/shm:/dev/shm
+  # # pg-2:
+  # #   image: bitnami/postgresql-repmgr:11
+  # #   ports:
+  # #     - 5432
+  # #   # volumes:
+  # #   #   - pg_1_data:/bitnami/postgresql
+  # #   environment:
+  # #     - POSTGRESQL_POSTGRES_PASSWORD=adminpassword
+  # #     - POSTGRESQL_USERNAME=customuser
+  # #     - POSTGRESQL_PASSWORD=custompassword
+  # #     - POSTGRESQL_DATABASE=customdatabase
+  # #     - REPMGR_PASSWORD=repmgrpassword
+  # #     - REPMGR_PRIMARY_HOST=pg-0
+  # #     - REPMGR_PARTNER_NODES=pg-0,pg-1,pg-2
+  # #     - REPMGR_NODE_NAME=pg-2
+  # #     - REPMGR_NODE_NETWORK_NAME=pg-2
+  # #   volumes:
+  # #     - /dev/shm:/dev/shm
+  #
+  # pgpool:
+  #   image: bitnami/pgpool:4
+  #   ports:
+  #     - 5432:5432
+  #   environment:
+  #     - PGPOOL_BACKEND_NODES=0:pg-0:5432,1:pg-1:5432
+  #     - PGPOOL_SR_CHECK_USER=customuser
+  #     #- ENABLE_POOL_HBA = on
+  #     - PGPOOL_SR_CHECK_PASSWORD=custompassword
+  #     - PGPOOL_ENABLE_LDAP=no
+  #     - PGPOOL_POSTGRES_USERNAME=postgres
+  #     - PGPOOL_POSTGRES_PASSWORD=adminpassword
+  #     - PGPOOL_ADMIN_USERNAME=admin
+  #     - PGPOOL_ADMIN_PASSWORD=adminpassword
+  #     - PGPOOL_ENABLE_LOAD_BALANCING=yes
+  #   links:
+  #     - pg-0
+  #     - pg-1
+  #   volumes:
+  #     - /dev/shm:/dev/shm
+  #   healthcheck:
+  #     test: ["CMD", "/healthcheck.sh"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+# Timescal Database
+  # timescaledb:
+  #   image: timescale/timescaledb:1.2.1-pg11
+  #   ports:
+  #   - 5432
+  #   #command: postgres -c 'max_connections=200'
+  #   environment:
+  #      POSTGRES_DB: test
+  #      POSTGRES_USER: maropost
+  #      POSTGRES_PASSWORD: Maro123!
+  #   networks:
+  #     - default
+  #   volumes:
+  #     - /dev/shm:/dev/shm
+
+  # pgpool:
+  #   image: bitnami/pgpool:4
+  #   ports:
+  #     - 5432:5432
+  #   networks:
+  #     - default
+  #   links:
+  #     - timescaledb
+  #   environment:
+  #     - PGPOOL_BACKEND_NODES=0:timescaledb:5432
+  #     - PGPOOL_SR_CHECK_USER=maropost
+  #     - PGPOOL_SR_CHECK_PASSWORD=Maro123!
+  #     - PGPOOL_ENABLE_LDAP=no
+  #     - PGPOOL_POSTGRES_USERNAME=postgres
+  #     - PGPOOL_POSTGRES_PASSWORD=Maro123!
+  #     - PGPOOL_ADMIN_USERNAME=admin
+  #     - PGPOOL_ADMIN_PASSWORD=Maro123!
+  #     - PGPOOL_ENABLE_LOAD_BALANCING=yes
+  #     - PGPOOL_MAX_POOL=1000
 
 # 3 node cluster
 # If you see exit code 137 (OOM killer) then ensure Docker has access to more resources
@@ -175,7 +275,7 @@ services:
     tty: true
     container_name: test
     links:
-      - timescaledb
+      - timescale
     networks:
       - default
 
